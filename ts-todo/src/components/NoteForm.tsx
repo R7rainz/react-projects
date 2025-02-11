@@ -1,18 +1,13 @@
-"use client"
-
 import { type FormEvent, useRef, useState } from "react"
-import { useRouter } from "next/navigation"
+import { useNavigate } from "react-router-dom"
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Label } from "@/components/ui/label"
-import { MultiSelect } from "@/components/ui/multi-select"
+import { MultiSelect, type Option } from "@/components/ui/multi-select"
 
-type Tag = {
-  id: string
-  label: string
-}
+type Tag = Option
 
 type NoteData = {
   title: string
@@ -25,19 +20,21 @@ type NoteFormProps = {
 }
 
 export default function NoteForm({ onSubmit }: NoteFormProps) {
-  const router = useRouter()
+  const navigate = useNavigate()
   const titleRef = useRef<HTMLInputElement>(null)
   const textAreaRef = useRef<HTMLTextAreaElement>(null)
   const [selectedTags, setSelectedTags] = useState<Tag[]>([])
 
-  function handleSubmit(e: FormEvent) {
+  function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault()
 
-    onSubmit({
-      title: titleRef.current!.value,
-      markdown: textAreaRef.current!.value,
-      tags: selectedTags,
-    })
+    if (titleRef.current && textAreaRef.current) {
+      onSubmit({
+        title: titleRef.current.value,
+        markdown: textAreaRef.current.value,
+        tags: selectedTags,
+      })
+    }
   }
 
   return (
@@ -45,8 +42,8 @@ export default function NoteForm({ onSubmit }: NoteFormProps) {
       <CardHeader>
         <CardTitle className="text-2xl font-bold">Create New Note</CardTitle>
       </CardHeader>
-      <CardContent>
-        <form onSubmit={handleSubmit} className="space-y-6">
+      <form onSubmit={handleSubmit}>
+        <CardContent className="space-y-6">
           <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
             <div className="space-y-2">
               <Label htmlFor="title">Title</Label>
@@ -55,12 +52,11 @@ export default function NoteForm({ onSubmit }: NoteFormProps) {
             <div className="space-y-2">
               <Label htmlFor="tags">Tags</Label>
               <MultiSelect
-                id="tags"
-                value={selectedTags}
+                options={[]} // You can populate this with existing tags if needed
+                selected={selectedTags}
                 onChange={setSelectedTags}
-                options={[]}
-                isCreatable
                 placeholder="Select or create tags..."
+                isCreatable
               />
             </div>
           </div>
@@ -74,16 +70,14 @@ export default function NoteForm({ onSubmit }: NoteFormProps) {
               placeholder="Write your note here..."
             />
           </div>
-        </form>
-      </CardContent>
-      <CardFooter className="flex justify-end space-x-4">
-        <Button variant="outline" onClick={() => router.back()}>
-          Cancel
-        </Button>
-        <Button type="submit" onClick={handleSubmit}>
-          Save
-        </Button>
-      </CardFooter>
+        </CardContent>
+        <CardFooter className="flex justify-end space-x-4">
+          <Button variant="outline" type="button" onClick={() => navigate(-1)}>
+            Cancel
+          </Button>
+          <Button type="submit">Save</Button>
+        </CardFooter>
+      </form>
     </Card>
   )
 }
