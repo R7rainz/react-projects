@@ -19,7 +19,7 @@ type MultiSelectProps = {
   isCreatable?: boolean
 }
 
-export function MultiSelect({ options, selected, onChange, className, isCreatable = false }: MultiSelectProps) {
+export function MultiSelect({ options = [], selected = [], onChange, className, isCreatable = false, }: MultiSelectProps) {
   const inputRef = React.useRef<HTMLInputElement>(null)
   const [open, setOpen] = React.useState(false)
   const [inputValue, setInputValue] = React.useState("")
@@ -44,7 +44,8 @@ export function MultiSelect({ options, selected, onChange, className, isCreatabl
     }
   }
 
-  const selectables = isCreatable ? [...options, { value: inputValue, label: `Create "${inputValue}"` }] : options
+  const selectables = isCreatable ? [...(options ?? []), { value: inputValue, label: `Create "${inputValue}"` }] : []
+  console.log("Multiset Props: ",{options, selected})
 
   return (
     <Command onKeyDown={handleKeyDown} className={className}>
