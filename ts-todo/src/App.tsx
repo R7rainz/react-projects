@@ -1,7 +1,7 @@
 import { Navigate } from 'react-router-dom'
 import { Route, Routes } from 'react-router-dom'
 import { Container } from 'react-bootstrap'
-import NewNote from './components/NewNote'
+import { NewNote } from './components/NewNote'
 import { useLocalStorage } from './hooks/useLocalStorage'
 import { useMemo } from 'react'
 

@@ -26,7 +26,7 @@ export default function NoteForm({ onSubmit }: NoteFormProps) {
   const [selectedTags, setSelectedTags] = useState<Tag[]>([])
 
   function handleSubmit(e: FormEvent<HTMLFormElement>) {
-    e.preventDefault()
+    e.preventDefault() //prevents page from reloading
 
     if (titleRef.current && textAreaRef.current) {
       onSubmit({
