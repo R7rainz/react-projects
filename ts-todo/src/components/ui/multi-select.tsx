@@ -1,12 +1,14 @@
 "use client"
 
 import * as React from "react"
+import { useMemo, useState } from "react"
 import { Check, ChevronsUpDown, Plus } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { Badge } from "@/components/ui/badge"
+import { useLocalStorage } from "../../hooks/useLocalStorage"
 
 export type Option = {
   id: string
@@ -29,8 +31,8 @@ export function MultiSelect({
   placeholder = "Select options...",
   isCreatable = false,
 }: MultiSelectProps) {
-  const [open, setOpen] = React.useState(false)
-  const [inputValue, setInputValue] = React.useState("")
+  const [open, setOpen] = useState(false)
+  const [inputValue, setInputValue] = useState("")
 
   const handleSelect = (option: Option) => {
     if (selected.some((item) => item.value === option.value)) {
@@ -42,7 +44,7 @@ export function MultiSelect({
 
   const handleCreate = () => {
     if (inputValue && !options.some((option) => option.label.toLowerCase() === inputValue.toLowerCase())) {
-      const newOption = { id:inputValue, value: inputValue.toLowerCase(), label: inputValue }
+      const newOption = { id: inputValue, value: inputValue.toLowerCase(), label: inputValue }
       onChange([...selected, newOption])
       setInputValue("")
     }
@@ -100,3 +102,43 @@ export function MultiSelect({
   )
 }
 
+export default function App() {
+  // ⏬ Load tags from localStorage
+  const [tags, setTags] = useLocalStorage<Option[]>("TAGS", [])
+  console.log("📌 Stored Tags from Local Storage:", tags)
+
+  // ⏬ Memoize available tags
+  const availableTags = useMemo(() => {
+    console.log("📌 Available Tags in App:", tags)
+    return tags
+  }, [tags])
+
+  // ✅ Function to add a new tag and save it to localStorage
+  const onAddTag = (newTag: Option) => {
+    console.log("➕ Adding New Tag:", newTag)
+
+    setTags(prevTags => {
+      const exists = prevTags.some(tag => tag.value === newTag.value)
+      if (!exists) {
+        const updatedTags = [...prevTags, newTag]
+        console.log("✅ Updated Tags:", updatedTags)
+        return updatedTags
+      }
+      console.log("⚠️ Tag already exists, skipping addition.")
+      return prevTags
+    })
+  }
+
+  return (
+    <div className="p-6">
+      <h1 className="text-2xl font-bold mb-4">Tag Selector</h1>
+      <MultiSelect
+        options={availableTags}
+        selected={[]}
+        onChange={onAddTag}
+        placeholder="Select or create tags..."
+        isCreatable={true}
+      />
+    </div>
+  )
+}

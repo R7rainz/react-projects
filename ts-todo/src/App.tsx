@@ -3,7 +3,7 @@ import { Route, Routes } from "react-router-dom";
 import { Container } from "react-bootstrap";
 import { NewNote } from "./components/NewNote";
 import { useLocalStorage } from "./hooks/useLocalStorage";
-import { useMemo, useEffect } from "react";
+import { useMemo } from "react";
 import { v4 as uuidV4 } from "uuid";
 
 export type Note = {
@@ -36,15 +36,7 @@ function App() {
   const [notes, setNotes] = useLocalStorage<RawNote[]>("NOTES", []);
   const [tags, setTags] = useLocalStorage<Tag[]>("TAGS", []);
 
-  console.log("🔍 Fetching stored tags from localStorage:", tags);
-
-  // Ensure tags sync correctly on mount (important for Strict Mode)
-  useEffect(() => {
-    setTags((prevTags) => {
-      console.log("🔄 Syncing Tags:", prevTags);
-      return prevTags; // Ensures state is properly initialized
-    });
-  }, []);
+  console.log("🔍 Stored Tags:", tags);
 
   const notesWithTags = useMemo(() => {
     return notes.map((note) => ({
@@ -53,12 +45,34 @@ function App() {
     }));
   }, [notes, tags]);
 
-  function onCreateNote({ tags, ...data }: NoteData) {
-    setNotes((prevNotes) => [
+  function onCreateNote({ tags: noteTags, ...data }: NoteData) {
+    console.log("📝 Creating Note with Tags:", noteTags);
+
+    const updatedTags = [...tags];
+
+    // Ensure tag IDs are correct
+    const tagIds = noteTags.map(tag => {
+      let existingTag = updatedTags.find(t => t.label.toLowerCase() === tag.label.toLowerCase());
+
+      if (!existingTag) {
+        // If tag doesn't exist, create a new one
+        existingTag = { id: uuidV4(), label: tag.label, value: tag.label.toLowerCase() };
+        updatedTags.push(existingTag);
+      }
+
+      return existingTag.id;
+    });
+
+    console.log("✅ Final tag IDs:", tagIds);
+
+    // Update tags in localStorage
+    setTags(updatedTags);
+
+    // Store the new note with correct tag IDs
+    setNotes(prevNotes => [
       ...prevNotes,
-      { ...data, id: uuidV4(), tagIds: tags.map((tag) => tag.id) },
+      { ...data, id: uuidV4(), tagIds },
     ]);
-    console.log("📌 New Note Created:", data);
   }
 
   function onAddTag(newTag: Tag) {
@@ -67,9 +81,7 @@ function App() {
     setTags((prevTags) => {
       console.log("📌 Previous Tags:", prevTags);
 
-      const exists = prevTags.some(
-        (tag) => tag.label.toLowerCase() === newTag.label.toLowerCase()
-      );
+      const exists = prevTags.some(tag => tag.label.toLowerCase() === newTag.label.toLowerCase());
 
       if (!exists) {
         const updatedTags = [...prevTags, newTag];
