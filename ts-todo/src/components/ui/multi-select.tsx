@@ -9,6 +9,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { Badge } from "@/components/ui/badge"
 
 export type Option = {
+  id: string
   value: string
   label: string
 }
@@ -41,7 +42,7 @@ export function MultiSelect({
 
   const handleCreate = () => {
     if (inputValue && !options.some((option) => option.label.toLowerCase() === inputValue.toLowerCase())) {
-      const newOption = { value: inputValue.toLowerCase(), label: inputValue }
+      const newOption = { id:inputValue, value: inputValue.toLowerCase(), label: inputValue }
       onChange([...selected, newOption])
       setInputValue("")
     }

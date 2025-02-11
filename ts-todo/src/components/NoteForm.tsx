@@ -1,39 +1,42 @@
-import { type FormEvent, useRef, useState } from "react"
-import { useNavigate } from "react-router-dom"
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Textarea } from "@/components/ui/textarea"
-import { Label } from "@/components/ui/label"
-import { MultiSelect, type Option } from "@/components/ui/multi-select"
+import { type FormEvent, useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
+import { MultiSelect, type Option } from "@/components/ui/multi-select";
 
-type Tag = Option
+type Tag = Option;
 
 type NoteData = {
-  title: string
-  markdown: string
-  tags: Tag[]
-}
+  title: string;
+  markdown: string;
+  tags: Tag[];
+};
 
 type NoteFormProps = {
-  onSubmit: (data: NoteData) => void
-}
+  onSubmit: (data: NoteData) => void;
+  onAddTag: (tag: Tag) => void;
+  availableTags: Tag[];
+};
 
-export default function NoteForm({ onSubmit }: NoteFormProps) {
-  const navigate = useNavigate()
-  const titleRef = useRef<HTMLInputElement>(null)
-  const textAreaRef = useRef<HTMLTextAreaElement>(null)
-  const [selectedTags, setSelectedTags] = useState<Tag[]>([])
+export default function NoteForm({ onSubmit, availableTags }: NoteFormProps) {
+  console.log("Available Tags in NoteForm:", availableTags);
+  const navigate = useNavigate();
+  const titleRef = useRef<HTMLInputElement>(null);
+  const textAreaRef = useRef<HTMLTextAreaElement>(null);
+  const [selectedTags, setSelectedTags] = useState<Option[]>([]);
 
   function handleSubmit(e: FormEvent<HTMLFormElement>) {
-    e.preventDefault() //prevents page from reloading
+    e.preventDefault(); // prevents page from reloading
 
     if (titleRef.current && textAreaRef.current) {
       onSubmit({
         title: titleRef.current.value,
         markdown: textAreaRef.current.value,
         tags: selectedTags,
-      })
+      });
     }
   }
 
@@ -52,7 +55,7 @@ export default function NoteForm({ onSubmit }: NoteFormProps) {
             <div className="space-y-2">
               <Label htmlFor="tags">Tags</Label>
               <MultiSelect
-                options={[]} // You can populate this with existing tags if needed
+                options={availableTags.map(tag => ({ id: tag.id, value: tag.id, label: tag.label }))}
                 selected={selectedTags}
                 onChange={setSelectedTags}
                 placeholder="Select or create tags..."
@@ -79,6 +82,6 @@ export default function NoteForm({ onSubmit }: NoteFormProps) {
         </CardFooter>
       </form>
     </Card>
-  )
+  );
 }
 
