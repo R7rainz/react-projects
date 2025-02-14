@@ -1,16 +1,18 @@
 import './App.css'
-import { Route, BrowserRouter as Router } from 'react-router-dom'
+import { Route, Routes, BrowserRouter as Router } from 'react-router-dom'
 import Header from './components/Header'
-function App() {
 
+function App() {
   return (
     <Router>
       <div className='min-h-full mb-4'>
-        <Route>
-          <Header />
-        </Route>
+        <Header />
+        <main className='flex-grow'>
+          <Routes>
+          </Routes>
+        </main>
       </div>
-    </ Router>
+    </Router>
   )
 }
 
