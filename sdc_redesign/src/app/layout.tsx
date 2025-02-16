@@ -1,29 +1,19 @@
-import type React from "react"
-import type { Metadata } from "next"
-import { Space_Grotesk } from "next/font/google"
-import "./globals.css"
-import { ThemeProvider } from "@/components/theme-provider"
-
-const spaceGrotesk = Space_Grotesk({ subsets: ["latin"] })
-
-export const metadata: Metadata = {
-  title: "SDC Club",
-  description: "Welcome to the SDC Club website",
-}
+import React from "react";
+import "./globals.css";
+import { ThemeProvider } from "../components/theme-provider";
 
 export default function RootLayout({
   children,
 }: {
-  children: React.ReactNode
+  children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className="scroll-smooth">
-      <body className={spaceGrotesk.className}>
+    <div className="scroll-smooth">
+      <div className="space-grotesk">
         <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
           {children}
         </ThemeProvider>
-      </body>
-    </html>
-  )
+      </div>
+    </div>
+  );
 }
-
