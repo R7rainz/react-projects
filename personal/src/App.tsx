@@ -7,6 +7,7 @@ import About from './components/About'
 import Contact from './components/Contact'
 import Login from './components/Login'
 import GetStarted from './components/Getstarted'
+import Footer from './components/Footer'
 
 function App() {
   return (
@@ -23,6 +24,7 @@ function App() {
             <Route path="/get-started" element={<GetStarted />} />
           </Routes>
         </main>
+        <Footer />
       </div>
     </Router>
   )
