@@ -1,3 +1,5 @@
+"use client"
+
 import { useEffect, useRef, useState } from "react"
 import { gsap } from "gsap"
 import { ScrollTrigger } from "gsap/ScrollTrigger"
@@ -26,12 +28,10 @@ const teachers = [
 
 export default function MembersShowcase() {
   const sectionRef = useRef(null)
-  const scrollRef = useRef(null)
   const [activeIndex, setActiveIndex] = useState(0)
 
   useEffect(() => {
     const section = sectionRef.current
-    const scrollContainer = scrollRef.current
 
     gsap.fromTo(
       section,
@@ -47,20 +47,6 @@ export default function MembersShowcase() {
       },
     )
 
-    const tl = gsap.timeline({
-      scrollTrigger: {
-        trigger: section,
-        start: "top bottom",
-        end: "bottom top",
-        scrub: 1,
-      },
-    })
-
-    tl.to(scrollContainer, {
-      x: "-50%",
-      ease: "none",
-    })
-
     const interval = setInterval(() => {
       setActiveIndex((prevIndex) => (prevIndex + 1) % members.length)
     }, 3000)
@@ -69,9 +55,9 @@ export default function MembersShowcase() {
   }, [])
 
   return (
-    <section id="members" ref={sectionRef} className="py-20 bg-secondary/30">
+    <section id="members" ref={sectionRef} className="py-20 bg-background-light dark:bg-background-dark">
       <div className="container mx-auto px-6">
-        <h2 className="text-4xl font-bold mb-12 text-center">Our Teachers</h2>
+        <h2 className="text-4xl font-bold mb-12 text-center text-primary dark:text-primary-dark">Our Teachers</h2>
         <div className="flex justify-center space-x-8 mb-16">
           {teachers.map((teacher) => (
             <div key={teacher.name} className="text-center">
@@ -82,20 +68,20 @@ export default function MembersShowcase() {
                   className="rounded-full transition-all duration-300 group-hover:scale-110 w-full h-full object-cover"
                 />
                 <div className="absolute inset-0 flex flex-col items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-primary/80 rounded-full">
-                  <p className="text-sm font-semibold mb-2 text-primary-foreground">{teacher.subject}</p>
+                  <p className="text-sm font-semibold mb-2 text-white">{teacher.subject}</p>
                   <a href={teacher.linkedin} target="_blank" rel="noopener noreferrer">
-                    <LinkedIn className="w-6 h-6 text-primary-foreground" />
+                    <LinkedIn className="w-6 h-6 text-white" />
                   </a>
                 </div>
               </div>
-              <h3 className="text-xl font-semibold">{teacher.name}</h3>
+              <h3 className="text-xl font-semibold text-primary dark:text-primary-dark">{teacher.name}</h3>
             </div>
           ))}
         </div>
-        <h2 className="text-4xl font-bold mb-12 text-center">Our Members</h2>
+        <h2 className="text-4xl font-bold mb-12 text-center text-primary dark:text-primary-dark">Our Members</h2>
       </div>
       <div className="overflow-hidden">
-        <div ref={scrollRef} className="flex space-x-8 w-[200%]">
+        <div className="flex space-x-8 py-8 animate-scroll">
           {[...members, ...members].map((member, index) => (
             <div
               key={`${member.name}-${index}`}
@@ -109,14 +95,16 @@ export default function MembersShowcase() {
                   alt={member.name}
                   className="rounded-lg transition-all duration-300 group-hover:scale-105 w-full h-full object-cover"
                 />
-                <div className="absolute inset-0 flex flex-col items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-primary/80 rounded-lg">
-                  <p className="text-sm font-semibold mb-2 text-primary-foreground">{member.role}</p>
+                <div className="absolute inset-0 flex flex-col items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-secondary/80 rounded-lg">
+                  <p className="text-sm font-semibold mb-2 text-white">{member.role}</p>
                   <a href={member.linkedin} target="_blank" rel="noopener noreferrer">
-                    <LinkedIn className="w-6 h-6 text-primary-foreground" />
+                    <LinkedIn className="w-6 h-6 text-white" />
                   </a>
                 </div>
               </div>
-              <h3 className="text-xl font-semibold text-center">{member.name}</h3>
+              <h3 className="text-xl font-semibold text-center text-secondary dark:text-secondary-dark">
+                {member.name}
+              </h3>
             </div>
           ))}
         </div>
@@ -124,3 +112,4 @@ export default function MembersShowcase() {
     </section>
   )
 }
+
