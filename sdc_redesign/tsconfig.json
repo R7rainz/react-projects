@@ -1,11 +1,17 @@
 {
   "compilerOptions": {
+    "module": "ESNext",
     "lib": ["dom", "es2015"],
     "esModuleInterop": true,
-    "jsx" : "react",
+    "jsx": "react",
     "baseUrl": "./",
     "paths": {
       "@/*": ["src/*"]
-    }
+    },
+    "strict": true,
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "allowSyntheticDefaultImports": true,
+    "skipLibCheck": true
   }
 }
