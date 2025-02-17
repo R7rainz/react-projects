@@ -18,12 +18,12 @@ const members = [
 
 const teachers = [
   {
-    name: "Prof. Alice Williams",
+    name: "Dr. XYZ",
     subject: "Computer Science",
     image: "/placeholder.svg",
     linkedin: "https://linkedin.com",
   },
-  { name: "Dr. Robert Taylor", subject: "Data Science", image: "/placeholder.svg", linkedin: "https://linkedin.com" },
+  { name: "Dr. Cristiano Ronaldo", subject: "Data Science", image: "/placeholder.svg", linkedin: "https://linkedin.com" },
 ]
 
 export default function MembersShowcase() {
