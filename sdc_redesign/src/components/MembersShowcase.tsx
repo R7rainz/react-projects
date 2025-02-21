@@ -3,7 +3,7 @@ import React from "react"
 import { useEffect, useRef, useState } from "react"
 import { gsap } from "gsap"
 import { ScrollTrigger } from "gsap/ScrollTrigger"
-import { LinkedinIcon as LinkedIn, ChevronLeft, ChevronRight } from "lucide-react"
+import { LinkedinIcon as LinkedIn } from "lucide-react"
 
 gsap.registerPlugin(ScrollTrigger)
 
@@ -31,56 +31,15 @@ const teachers = [
 ]
 
 export default function MembersShowcase() {
-  const sectionRef = useRef(null)
-  const sliderRef = useRef<HTMLDivElement | null>(null)
+  const sectionRef = useRef<HTMLElement>(null)
+  const sliderRef = useRef<HTMLDivElement>(null)
   const [activeIndex, setActiveIndex] = useState(0)
-  const [isAnimating, setIsAnimating] = useState(false)
-  const timeoutRef = useRef<NodeJS.Timeout | null>(null)
-
-  const moveToSlide = useCallback((index: number) => {
-    if (typeof window === "undefined" || isAnimating || !sliderRef.current) return
-
-    setIsAnimating(true)
-    setActiveIndex(index)
-
-    const slideWidth = 320 // width + gap
-    const offset = window.innerWidth / 2 - slideWidth / 2
-    const targetX = -(index * slideWidth) + offset
-
-    try {
-      gsap.to(sliderRef.current, {
-        x: targetX,
-        duration: 1,
-        ease: "power2.out",
-        onComplete: () => {
-          setIsAnimating(false)
-          // Reset the timeout for the next slide
-          if (timeoutRef.current) {
-            clearTimeout(timeoutRef.current)
-          }, [isAnimating, sliderRef, timeoutRef])
-          timeoutRef.current = setTimeout(() => {
-            moveToSlide((index + 1) % members.length)
-          }, 3000)
-        },
-      })
-    } catch (error) {
-      console.error("GSAP animation error:", error)
-      setIsAnimating(false)
-    }
-  }
-
-  const handlePrevClick = () => {
-    const newIndex = (activeIndex - 1 + members.length) % members.length
-    moveToSlide(newIndex)
-  }
-
-  const handleNextClick = () => {
-    const newIndex = (activeIndex + 1) % members.length
-    const newIndex = (activeIndex + 1) % members.length
-    moveToSlide(newIndex)
 
   useEffect(() => {
     const section = sectionRef.current
+    const slider = sliderRef.current
+
+    if (!section || !slider) return
 
     gsap.fromTo(
       section,
@@ -96,15 +55,64 @@ export default function MembersShowcase() {
       },
     )
 
-    // Initialize the slider position
-    moveToSlide(0)
+    const slideWidth = 320 // width + gap
+    const totalWidth = slideWidth * members.length
+    const duration = 5 // Time for one member to pass (in seconds)
+
+    // Create a timeline for the infinite scroll
+    const tl = gsap.timeline({ repeat: -1 })
+
+    // Animate the slider
+    tl.to(slider, {
+      x: -totalWidth,
+      duration: duration * members.length,
+      ease: "none",
+      modifiers: {
+        x: gsap.utils.unitize((x) => Number.parseFloat(x) % totalWidth), // Allows for seamless looping
+      },
+    })
+
+    // Update active index
+    const updateActiveIndex = () => {
+      const progress = tl.progress()
+      const newActiveIndex = Math.floor(progress * members.length) % members.length
+      setActiveIndex(newActiveIndex)
+    }
+
+    // Add the updateActiveIndex function to the ticker
+    gsap.ticker.add(updateActiveIndex)
+
+    // Spotlight effect
+    const updateSpotlight = () => {
+      const centerX = window.innerWidth / 2
+      const sliderRect = slider.getBoundingClientRect()
+
+      gsap.utils.toArray<HTMLElement>(slider.children).forEach((child, index) => {
+        const childRect = child.getBoundingClientRect()
+        const childCenterX = childRect.left + childRect.width / 2
+        const distanceFromCenter = Math.abs(childCenterX - centerX)
+        const maxDistance = window.innerWidth / 2
+
+        const scale = gsap.utils.clamp(0.8, 1.1, 1.1 - (distanceFromCenter / maxDistance) * 0.3)
+        const brightness = gsap.utils.clamp(50, 100, 100 - (distanceFromCenter / maxDistance) * 50)
+
+        gsap.to(child, {
+          scale: scale,
+          filter: `brightness(${brightness}%)`,
+          duration: 0.2,
+        })
+      })
+    }
+
+    // Add the updateSpotlight function to the ticker
+    gsap.ticker.add(updateSpotlight)
 
     return () => {
-      if (timeoutRef.current) {
-        clearTimeout(timeoutRef.current)
-      }
+      tl.kill()
+      gsap.ticker.remove(updateActiveIndex)
+      gsap.ticker.remove(updateSpotlight)
     }
-  }, [moveToSlide]) // Added moveToSlide to dependencies
+  }, [])
 
   return (
     <section id="members" ref={sectionRef} className="py-20 bg-background-light dark:bg-background-dark">
@@ -134,38 +142,19 @@ export default function MembersShowcase() {
       </div>
 
       <div className="relative overflow-hidden py-20">
-        {/* Navigation Buttons */}
-        <button
-          onClick={handlePrevClick}
-          className="absolute left-4 top-1/2 -translate-y-1/2 z-10 p-2 rounded-full bg-black/20 hover:bg-black/40 text-white transition-colors"
-        >
-          <ChevronLeft className="w-6 h-6" />
-        </button>
-        <button
-          onClick={handleNextClick}
-          className="absolute right-4 top-1/2 -translate-y-1/2 z-10 p-2 rounded-full bg-black/20 hover:bg-black/40 text-white transition-colors"
-        >
-          <ChevronRight className="w-6 h-6" />
-        </button>
+        <div className="absolute inset-y-0 left-0 w-1/4 bg-gradient-to-r from-background-light dark:from-background-dark to-transparent z-10"></div>
+        <div className="absolute inset-y-0 right-0 w-1/4 bg-gradient-to-l from-background-light dark:from-background-dark to-transparent z-10"></div>
 
-        {/* Slider */}
         <div
           ref={sliderRef}
           className="flex space-x-8 py-8"
           style={{
-            transform: "translateX(0)",
+            width: `${members.length * 320 * 2}px`, // Double the width for seamless looping
             willChange: "transform",
           }}
         >
-          {members.map((member, index) => (
-            <div
-              key={member.name}
-              className={`w-64 flex-shrink-0 transition-all duration-500 ${
-                index === activeIndex
-                  ? "scale-110 shadow-xl z-10 brightness-100"
-                  : "scale-90 brightness-50 hover:brightness-75"
-              }`}
-            >
+          {[...members, ...members].map((member, index) => (
+            <div key={`${member.name}-${index}`} className="w-64 flex-shrink-0 transition-all duration-500">
               <div className="relative w-64 h-64 mb-4 group">
                 <img
                   src={member.image || "/placeholder.svg"}
@@ -174,7 +163,7 @@ export default function MembersShowcase() {
                 />
                 <div
                   className={`absolute inset-0 flex flex-col items-center justify-center transition-opacity duration-300 bg-secondary/80 rounded-lg ${
-                    index === activeIndex ? "opacity-0 group-hover:opacity-100" : "opacity-0"
+                    index % members.length === activeIndex ? "opacity-0 group-hover:opacity-100" : "opacity-0"
                   }`}
                 >
                   <p className="text-sm font-semibold mb-2 text-white">{member.role}</p>
@@ -189,27 +178,8 @@ export default function MembersShowcase() {
             </div>
           ))}
         </div>
-
-        {/* Dots Navigation */}
-        <div className="flex justify-center space-x-2 mt-8">
-          {members.map((_, index) => (
-            <button
-              key={index}
-              onClick={() => moveToSlide(index)}
-              className={`w-3 h-3 rounded-full transition-all duration-300 ${
-                index === activeIndex
-                  ? "bg-secondary scale-125"
-                  : "bg-gray-400 hover:bg-gray-600 dark:bg-gray-600 dark:hover:bg-gray-400"
-              }`}
-            />
-          ))}
-        </div>
       </div>
     </section>
   )
-}
-
-function useCallback(arg0: (index: number) => void) {
-  throw new Error("Function not implemented.")
 }
 
