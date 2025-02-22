@@ -1,18 +1,33 @@
 "use client"
-import React from "react"
-import { useEffect, useRef, useState } from "react"
+
+import React,{ useEffect, useRef, useState } from "react"
 import { gsap } from "gsap"
 import { ScrollTrigger } from "gsap/ScrollTrigger"
-import { LinkedinIcon as LinkedIn } from "lucide-react"
+import { LinkedinIcon } from "lucide-react"
 
 gsap.registerPlugin(ScrollTrigger)
 
 const members = [
-  { name: "John Doe", role: "Developer", image: "/placeholder.svg", linkedin: "https://linkedin.com" },
-  { name: "Jane Smith", role: "Designer", image: "/placeholder.svg", linkedin: "https://linkedin.com" },
-  { name: "Mike Johnson", role: "Project Manager", image: "/placeholder.svg", linkedin: "https://linkedin.com" },
-  { name: "Emily Brown", role: "Data Scientist", image: "/placeholder.svg", linkedin: "https://linkedin.com" },
-  { name: "Chris Lee", role: "UI/UX Designer", image: "/placeholder.svg", linkedin: "https://linkedin.com" },
+  {
+    name: "John Doe",
+    role: "Developer",
+    image: "/images/john.svg",
+    linkedin: "https://linkedin.com/johndoe",
+  },
+  { name: "Jane Smith", role: "Designer", image: "/images/jane.svg", linkedin: "https://linkedin.com/janesmith" },
+  {
+    name: "Mike Johnson",
+    role: "Project Manager",
+    image: "/images/mike.svg",
+    linkedin: "https://linkedin.com/mikejohnson",
+  },
+  {
+    name: "Emily Brown",
+    role: "Data Scientist",
+    image: "/images/emily.svg",
+    linkedin: "https://linkedin.com/emilybrown",
+  },
+  { name: "Chris Lee", role: "UI/UX Designer", image: "/images/chris.svg", linkedin: "https://linkedin.com/chrislee" },
 ]
 
 const teachers = [
@@ -130,7 +145,7 @@ export default function MembersShowcase() {
                 <div className="absolute inset-0 flex flex-col items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-primary/80 rounded-full">
                   <p className="text-sm font-semibold mb-2 text-white">{teacher.subject}</p>
                   <a href={teacher.linkedin} target="_blank" rel="noopener noreferrer">
-                    <LinkedIn className="w-6 h-6 text-white" />
+                    <LinkedinIcon className="w-6 h-6 text-white" />
                   </a>
                 </div>
               </div>
@@ -168,7 +183,7 @@ export default function MembersShowcase() {
                 >
                   <p className="text-sm font-semibold mb-2 text-white">{member.role}</p>
                   <a href={member.linkedin} target="_blank" rel="noopener noreferrer">
-                    <LinkedIn className="w-6 h-6 text-white" />
+                    <LinkedinIcon className="w-6 h-6 text-white" />
                   </a>
                 </div>
               </div>
