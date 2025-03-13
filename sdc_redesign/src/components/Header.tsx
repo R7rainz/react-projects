@@ -1,9 +1,8 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import React, { useState, useEffect } from "react"
 import { motion } from "framer-motion"
 import { Moon, Sun } from "lucide-react"
-import React from "react"
 
 const navItems = [
   { name: "Welcome", href: "#welcome" },
@@ -15,9 +14,12 @@ const navItems = [
 export default function Header() {
   const [activeSection, setActiveSection] = useState("")
   const [isScrolled, setIsScrolled] = useState(false)
-  const [theme, setTheme] = useState("light")
+  const [theme, setTheme] = useState("dark") // Changed from "light" to "dark"
 
   useEffect(() => {
+    // Apply dark mode class on initial render
+    document.documentElement.classList.add("dark")
+
     const handleScroll = () => {
       const sections = document.querySelectorAll("section")
       const scrollPosition = window.scrollY
