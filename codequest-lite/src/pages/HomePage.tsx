@@ -7,6 +7,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Badge } from "@/components/ui/badge"
 import { PieChart, Pie, Cell, ResponsiveContainer } from "recharts"
 import { Code, CheckCircle, BarChart2, Trophy, ArrowRight } from "lucide-react"
+import { NavLink } from "react-router-dom"
 
 // Interactive background component
 const ParticleBackground: React.FC = () => {
@@ -128,12 +129,16 @@ const HomePage: React.FC = () => {
           </p>
 
           <div className="flex flex-wrap gap-4 justify-center">
+            <NavLink to="/signup" className="text-white">
             <Button size="lg" className="group">
               Get Started <ArrowRight className="ml-2 group-hover:translate-x-1 transition-transform" />
             </Button>
+            </NavLink>
+            <NavLink to="/about" className="text-white">
             <Button size="lg" variant="outline">
               Learn More
             </Button>
+            </NavLink>
           </div>
         </section>
 
@@ -291,9 +296,11 @@ const HomePage: React.FC = () => {
                   committed to continuous improvement.
                 </p>
               </div>
+              <NavLink to="/signup" className="text-white">
               <Button size="lg" className="whitespace-nowrap">
                 Get Started Now
               </Button>
+              </NavLink>    
             </CardContent>
           </Card>
         </section>

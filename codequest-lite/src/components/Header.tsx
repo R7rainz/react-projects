@@ -34,13 +34,15 @@ export default function Header() {
           })}
           </ul>
 
-          {/* Theme Toggle Button */}
-          <ul>
-          <li>
-            <ModeToggle />
-          </li>
-          </ul>
-        
+          <div className="flex items-center space-x-4">
+          <Link to="/login" className="text-black dark:text-white hover:underline">
+            Log In
+          </Link>
+          <Link to="/signup" className="text-black dark:text-white hover:underline">
+            Sign Up
+          </Link>
+          <ModeToggle />
+        </div>          
       </nav>
     </header>
   );
