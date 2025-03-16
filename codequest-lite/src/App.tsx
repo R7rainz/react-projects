@@ -1,6 +1,7 @@
 import Header from "@/components/Header"
-import { BrowserRouter as Router} from "react-router-dom"
+import { BrowserRouter as Router, Routes, Route} from "react-router-dom"
 import { ThemeProvider } from "./components/theme-provider"
+import HomePage from "./pages/HomePage"
 
 function App() {
   return (
@@ -8,6 +9,11 @@ function App() {
     <Router>
       <div className="flex flex-col min-h-screen">
         <Header />
+        <main className="flex-1 mt-16">
+          <Routes>
+            <Route path = "/" element={<HomePage/>} />
+          </Routes>
+        </main>
       </div>
     </Router>
     </ThemeProvider>

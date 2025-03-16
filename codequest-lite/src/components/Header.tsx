@@ -1,24 +1,47 @@
-import {Link} from "react-router-dom";
+import { Link, NavLink } from "react-router-dom";
 import { ModeToggle } from "./mode-toggle";
-export default function Header(){
-  return(
-    <header className = "ttop-0 shadow-md bg-white dark:bg-black w-full">
-      <nav>
-        <div>
-          <Link to="/" className="flex items-center">
-            <img src="" className="mr-3 h-10 rounded-full" alt="logo"/>
-          </Link>
-          <div className="flex items-center lg:order-2">
-            <Link to="/login" className="text-black dark:text-white">Log In</Link>
-          </div>
-          <div className="flex items-center lg:order-3">
-            <Link to="/signup" className="text-black dark:text-white">Sign Up</Link>
-          </div>
-          <div>
-            <ModeToggle/>
-          </div>
-        </div>
+
+export default function Header() {
+  return (
+    <header className="fixed top-0 left-0 w-full bg-white dark:bg-black shadow-md z-50">
+      <nav className="container mx-auto flex items-center justify-between p-4">
+        {/* Logo */}
+        <Link to="/" className="flex items-center">
+          <img src="" className="mr-3 h-10 rounded-full" alt="logo" />
+        </Link>
+
+        {/* Navigation Links */}
+        <ul className="flex-1 flex justify-center items-center space-x-4">
+          {["Home", "About"].map((text, index) => {
+            const path = text === "Home" ? "/" : `/${text.toLowerCase().replace(" ", "")}`;
+
+            return (
+              <li key={index}>
+                <NavLink
+                  to={path}
+                  className={({ isActive }) =>
+                    `block py-2 px-4 transition duration-200 ${
+                      isActive
+                        ? "underline underline-offset-4 text-black dark:text-white"
+                        : "text-black dark:text-white hover:underline hover:underline-offset-4"
+                    }`
+                  }
+                >
+                  {text}
+                </NavLink>
+              </li>
+            );
+          })}
+          </ul>
+
+          {/* Theme Toggle Button */}
+          <ul>
+          <li>
+            <ModeToggle />
+          </li>
+          </ul>
+        
       </nav>
     </header>
-  )
+  );
 }
